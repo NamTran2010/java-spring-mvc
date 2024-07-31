@@ -1,5 +1,6 @@
 package vn.namtran.laptopshop;
 
+import org.springframework.context.ApplicationContext;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -7,7 +8,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class LaptopshopApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(LaptopshopApplication.class, args);
-	}
 
+		// container
+		ApplicationContext namtran = SpringApplication.run(LaptopshopApplication.class, args);
+
+		for (String s : namtran.getBeanDefinitionNames()) {
+			System.out.println(s);
+		}
+	}
 }
