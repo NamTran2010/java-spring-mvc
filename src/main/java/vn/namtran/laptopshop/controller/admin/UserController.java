@@ -2,34 +2,39 @@ package vn.namtran.laptopshop.controller.admin;
 
 import java.util.List;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import vn.namtran.laptopshop.domain.User;
+import vn.namtran.laptopshop.service.UploadService;
 import vn.namtran.laptopshop.service.UserService;
 
 @Controller
 public class UserController {
 
     private final UserService userService;
+    private final UploadService uploadService;
+    private final PasswordEncoder passwordEncoder;
 
     public UserController(
-            UserService userService) {
+            UploadService uploadService,
+            UserService userService,
+            PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.uploadService = uploadService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @RequestMapping("/")
     public String getHomePage(Model model) {
-        List<User> arrUsers = this.userService.getAllUsersByEmail("nam@gmail.com");
+        List<User> arrUsers = this.userService.getAllUsersByEmail("1@gmail.com");
         System.out.println(arrUsers);
-        model.addAttribute("nam", "test");
-        model.addAttribute("tran", "from controller with model");
+
+        model.addAttribute("nam", "tran");
+        model.addAttribute("namtran2010", "from controller with model");
         return "hello";
     }
 
@@ -48,15 +53,25 @@ public class UserController {
         return "admin/user/detail";
     }
 
-    @RequestMapping("/admin/user/create") // GET
+    @GetMapping("/admin/user/create") // GET
     public String getCreateUserPage(Model model) {
         model.addAttribute("newUser", new User());
         return "admin/user/create";
     }
 
-    @RequestMapping(value = "/admin/user/create", method = RequestMethod.POST)
-    public String createUserPage(Model model, @ModelAttribute("newUser") User namtran) {
-        this.userService.handleSaveUser(namtran);
+    @PostMapping(value = "/admin/user/create")
+    public String createUserPage(Model model,
+            @ModelAttribute("newUser") User namtran2010,
+            @RequestParam("namtran2010File") MultipartFile file) {
+
+        String avatar = this.uploadService.handleSaveUploadFile(file, "avatar");
+        String hashPassword = this.passwordEncoder.encode(namtran2010.getPassword());
+
+        namtran2010.setAvatar(avatar);
+        namtran2010.setPassword(hashPassword);
+        namtran2010.setRole(this.userService.getRoleByName(namtran2010.getRole().getName()));
+        // save
+        this.userService.handleSaveUser(namtran2010);
         return "redirect:/admin/user";
     }
 
@@ -67,28 +82,32 @@ public class UserController {
         return "admin/user/update";
     }
 
-    @PostMapping("/admin/user/update") // GET
+    @PostMapping("/admin/user/update")
     public String postUpdateUser(Model model, @ModelAttribute("newUser") User namtran2010) {
         User currentUser = this.userService.getUserById(namtran2010.getId());
         if (currentUser != null) {
             currentUser.setAddress(namtran2010.getAddress());
             currentUser.setFullName(namtran2010.getFullName());
             currentUser.setPhone(namtran2010.getPhone());
+
+            // bug here
             this.userService.handleSaveUser(currentUser);
         }
         return "redirect:/admin/user";
     }
 
-    @GetMapping("/admin/user/delete/{id}") // GET
+    @GetMapping("/admin/user/delete/{id}")
     public String getDeleteUserPage(Model model, @PathVariable long id) {
         model.addAttribute("id", id);
+        // User user = new User();
+        // user.setId(id);
         model.addAttribute("newUser", new User());
         return "admin/user/delete";
     }
 
-    @PostMapping("/admin/user/delete") // GET
-    public String postDeleteUser(Model model, @ModelAttribute("newUser") User nam) {
-        this.userService.deleteAUser(nam.getId());
+    @PostMapping("/admin/user/delete")
+    public String postDeleteUser(Model model, @ModelAttribute("newUser") User eric) {
+        this.userService.deleteAUser(eric.getId());
         return "redirect:/admin/user";
     }
 }
