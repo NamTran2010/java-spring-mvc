@@ -9,7 +9,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
     >
       <div class="row g-4">
         <div class="col-lg-3">
-          <a href="https://hoidanit.vn" target="_blank">
+          <a href="https://namtran.vn" target="_blank">
             <h1 class="text-primary mb-0">Laptopshop</h1>
             <p class="text-secondary mb-0">@namtran2010</p>
           </a>
