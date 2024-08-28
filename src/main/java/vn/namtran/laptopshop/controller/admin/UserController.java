@@ -67,16 +67,18 @@ public class UserController {
             @ModelAttribute("newUser") @Valid User namtran2010,
             BindingResult newUserbindingResult,
             @RequestParam("namtran2010File") MultipartFile file) {
-        List<FieldError> errors = newUserbindingResult.getFieldErrors();
-        for (FieldError error : errors) {
-            System.out.println(">>>" + error.getField() + " - " + error.getDefaultMessage());
-        }
+
+        // List<FieldError> errors = newUserbindingResult.getFieldErrors();
+        // for (FieldError error : errors) {
+        // System.out.println(">>>" + error.getField() + " - " +
+        // error.getDefaultMessage());
+        // }
+
+        // validate
 
         if (newUserbindingResult.hasErrors()) {
             return "/admin/user/create";
         }
-
-        // validate
 
         String avatar = this.uploadService.handleSaveUploadFile(file, "avatar");
         String hashPassword = this.passwordEncoder.encode(namtran2010.getPassword());
