@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import jakarta.servlet.http.HttpSession;
@@ -13,12 +14,14 @@ import vn.namtran.laptopshop.domain.CartDetail;
 import vn.namtran.laptopshop.domain.Order;
 import vn.namtran.laptopshop.domain.OrderDetail;
 import vn.namtran.laptopshop.domain.Product;
+import vn.namtran.laptopshop.domain.Product_;
 import vn.namtran.laptopshop.domain.User;
 import vn.namtran.laptopshop.repository.CartDetailRepository;
 import vn.namtran.laptopshop.repository.CartRepository;
 import vn.namtran.laptopshop.repository.OrderDetailRepository;
 import vn.namtran.laptopshop.repository.OrderRepository;
 import vn.namtran.laptopshop.repository.ProductRepository;
+import vn.namtran.laptopshop.service.specification.ProductSpecs;
 
 @Service
 public class ProductService {
@@ -50,6 +53,10 @@ public class ProductService {
 
     public Page<Product> fetchProducts(Pageable page) {
         return this.productRepository.findAll(page);
+    }
+
+    public Page<Product> fetchProductsWithSpec(Pageable page, String name) {
+        return this.productRepository.findAll(ProductSpecs.nameLike(name), page);
     }
 
     public Optional<Product> fetchProductById(long id) {
