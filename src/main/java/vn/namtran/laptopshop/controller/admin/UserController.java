@@ -40,7 +40,7 @@ public class UserController {
         System.out.println(arrUsers);
 
         model.addAttribute("eric", "test");
-        model.addAttribute("hoidanit", "from controller with model");
+        model.addAttribute("namtran2010", "from controller with model");
         return "hello";
     }
 
@@ -57,7 +57,6 @@ public class UserController {
             }
         } catch (Exception e) {
             // page = 1
-            // TODO: handle exception
         }
 
         Pageable pageable = PageRequest.of(page - 1, 1);
